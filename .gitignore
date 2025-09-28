@@ -1,0 +1,44 @@
+# Gradle files
+.gradle/
+build/
+!gradle-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# Minecraft server files
+run/
+test-server/
+*.log
+eula.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Compiled files
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Package files
+*.zip
+*.tar.gz
+*.rar

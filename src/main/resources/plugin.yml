@@ -1,0 +1,31 @@
+name: Portal2Exit
+version: '${version}'
+main: portals.portaltoexit.Portaltoexit
+api-version: '1.21'
+author: Portal2Exit Developer
+description: A Portal-themed exit and teleportation plugin for Minecraft
+website: https://github.com/portal2exit
+softdepend: [Vault]
+
+commands:
+  portal:
+    description: Main portal command (basic functionality)
+    usage: /portal
+    permission: portal2exit.use
+
+permissions:
+  portal2exit.use:
+    description: Allows basic portal usage
+    default: true
+  portal2exit.create:
+    description: Allows creating portals
+    default: true
+  portal2exit.wand:
+    description: Allows using the portal wand
+    default: true
+  portal2exit.gui:
+    description: Allows using the portal GUI
+    default: true
+  portal2exit.admin:
+    description: Allows admin commands and managing all portals
+    default: op

@@ -1,0 +1,651 @@
+# Portal2Exit Configuration File
+# This file contains settings for the Portal2Exit plugin
+
+# Plugin Settings
+plugin:
+  # Enable debug logging
+  debug: false
+
+  # Auto-save interval in minutes (0 to disable)
+  auto-save-interval: 5
+
+# Portal Settings
+portals:
+  # Maximum number of portals per player (0 for unlimited)
+  max-portals-per-player: 10
+
+  # Portal cooldown in seconds
+  cooldown: 3
+
+  # Whether to play sounds when using portals
+  sounds-enabled: true
+
+  # Whether to show particles when using portals
+  particles-enabled: true
+
+  # Portal creation settings
+  creation:
+    # Item required to create portals (use minecraft:item_name format)
+    required-item: "minecraft:ender_eye"
+
+    # Block required as base for portal creation
+    required-base-block: "minecraft:obsidian"
+
+    # Whether to consume the required item when creating a portal
+    consume-item: true
+
+# Permissions Configuration
+permissions:
+  # Permission-based portal limits (highest matching permission applies)
+  # Format: permission: limit (0 for unlimited)
+  portal-limits:
+    "portal2exit.vip": 20
+    "portal2exit.mvp": 50
+    "portal2exit.admin": 0
+
+  # World restrictions per permission
+  world-restrictions:
+    enabled: true
+    # Format: permission: [allowed-worlds]
+    allowed-worlds:
+      "portal2exit.basic": ["world", "world_nether"]
+      "portal2exit.vip": ["world", "world_nether", "world_the_end"]
+      "portal2exit.admin": ["all"]
+
+# Economy Settings (Requires Vault)
+economy:
+  enabled: true
+
+  # Cost to create a portal
+  creation-cost: 1000.0
+
+  # Cost multiplier for additional portals (0 to disable scaling)
+  # Formula: creation-cost * (1 + (portal-count * multiplier))
+  scaling-multiplier: 0.5
+
+  # Default cost to use a portal (can be overridden per portal)
+  default-usage-cost: 10.0
+
+  # Refund percentage when removing a portal (0-100)
+  removal-refund-percentage: 50
+
+# Portal Activation Requirements
+activation:
+  # Require specific items to activate portal
+  item-requirements:
+    enabled: true
+    # Default requirement for all portals (can be overridden per portal)
+    default-items:
+      - material: "ENDER_PEARL"
+        amount: 1
+        consume: true
+        name: null # Optional custom name
+        lore: null # Optional custom lore
+
+  # Require specific kit/permission to use portal
+  permission-requirements:
+    enabled: true
+    # Default permission needed to use any portal
+    default-permission: "portal2exit.use"
+
+  # Kit requirements
+  kit-requirements:
+    enabled: true
+    # Check if player has received specific kit before using portal
+    check-kit-received: true
+
+# Kit System
+kits:
+  enabled: true
+
+  # Default kit given when using any portal (can be overridden per portal)
+  default-kit: null
+
+  # Kit cooldowns in seconds (-1 for one-time only, 0 for no cooldown)
+  kit-cooldowns:
+    "starter": -1
+    "daily": 86400
+    "weekly": 604800
+    "hourly": 3600
+    "vip": 43200
+    "mvp": 21600
+    "legend": 10800
+
+  # Kit definitions
+  available-kits:
+    # === STARTER KITS ===
+    starter:
+      display-name: "&6Starter Kit"
+      permission: "portal2exit.kit.starter"
+      one-time-only: true
+      items:
+        # Armor Set
+        - material: "LEATHER_HELMET"
+          amount: 1
+          name: "&7Starter Helmet"
+          enchantments:
+            PROTECTION: 1
+        - material: "LEATHER_CHESTPLATE"
+          amount: 1
+          name: "&7Starter Chestplate"
+          enchantments:
+            PROTECTION: 1
+        - material: "LEATHER_LEGGINGS"
+          amount: 1
+          name: "&7Starter Leggings"
+          enchantments:
+            PROTECTION: 1
+        - material: "LEATHER_BOOTS"
+          amount: 1
+          name: "&7Starter Boots"
+          enchantments:
+            PROTECTION: 1
+            FEATHER_FALLING: 1
+        # Tools
+        - material: "STONE_SWORD"
+          amount: 1
+          name: "&7Starter Sword"
+          lore:
+            - "&8A basic sword for beginners"
+          enchantments:
+            SHARPNESS: 1
+        - material: "STONE_PICKAXE"
+          amount: 1
+          enchantments:
+            EFFICIENCY: 1
+        - material: "STONE_AXE"
+          amount: 1
+          enchantments:
+            EFFICIENCY: 1
+        - material: "STONE_SHOVEL"
+          amount: 1
+        # Food & Basics
+        - material: "BREAD"
+          amount: 32
+        - material: "COOKED_BEEF"
+          amount: 16
+        - material: "TORCH"
+          amount: 64
+        - material: "OAK_LOG"
+          amount: 16
+        - material: "COBBLESTONE"
+          amount: 64
+        - material: "BED"
+          amount: 1
+
+    # === TIMED REWARD KITS ===
+    hourly:
+      display-name: "&aHourly Rewards"
+      permission: "portal2exit.kit.hourly"
+      one-time-only: false
+      items:
+        - material: "IRON_INGOT"
+          amount: 8
+        - material: "GOLD_INGOT"
+          amount: 4
+        - material: "EXPERIENCE_BOTTLE"
+          amount: 5
+        - material: "APPLE"
+          amount: 8
+        - material: "ARROW"
+          amount: 32
+
+    daily:
+      display-name: "&bDaily Rewards"
+      permission: "portal2exit.kit.daily"
+      one-time-only: false
+      items:
+        - material: "DIAMOND"
+          amount: 2
+        - material: "EMERALD"
+          amount: 5
+        - material: "GOLDEN_APPLE"
+          amount: 2
+        - material: "EXPERIENCE_BOTTLE"
+          amount: 16
+        - material: "IRON_BLOCK"
+          amount: 3
+        - material: "GOLD_BLOCK"
+          amount: 2
+        - material: "ENCHANTING_TABLE"
+          amount: 1
+        - material: "BOOKSHELF"
+          amount: 15
+
+    weekly:
+      display-name: "&5Weekly Rewards"
+      permission: "portal2exit.kit.weekly"
+      one-time-only: false
+      items:
+        - material: "DIAMOND_BLOCK"
+          amount: 1
+        - material: "NETHERITE_INGOT"
+          amount: 1
+        - material: "ENCHANTED_GOLDEN_APPLE"
+          amount: 1
+        - material: "BEACON"
+          amount: 1
+        - material: "EXPERIENCE_BOTTLE"
+          amount: 64
+        - material: "SHULKER_BOX"
+          amount: 2
+        - material: "ELYTRA"
+          amount: 1
+
+    # === RANK KITS ===
+    vip:
+      display-name: "&dVIP Kit"
+      permission: "portal2exit.kit.vip"
+      one-time-only: false
+      items:
+        # VIP Armor
+        - material: "IRON_HELMET"
+          amount: 1
+          name: "&d&lVIP Helmet"
+          lore:
+            - "&7Exclusive VIP armor piece"
+            - "&d+10% damage reduction"
+          enchantments:
+            PROTECTION: 2
+            UNBREAKING: 2
+        - material: "IRON_CHESTPLATE"
+          amount: 1
+          name: "&d&lVIP Chestplate"
+          enchantments:
+            PROTECTION: 2
+            UNBREAKING: 2
+        - material: "IRON_LEGGINGS"
+          amount: 1
+          name: "&d&lVIP Leggings"
+          enchantments:
+            PROTECTION: 2
+            UNBREAKING: 2
+        - material: "IRON_BOOTS"
+          amount: 1
+          name: "&d&lVIP Boots"
+          enchantments:
+            PROTECTION: 2
+            UNBREAKING: 2
+            FEATHER_FALLING: 2
+        # VIP Tools
+        - material: "DIAMOND_SWORD"
+          amount: 1
+          name: "&d&lVIP Sword"
+          enchantments:
+            SHARPNESS: 3
+            UNBREAKING: 2
+            LOOTING: 1
+        - material: "DIAMOND_PICKAXE"
+          amount: 1
+          name: "&d&lVIP Pickaxe"
+          enchantments:
+            EFFICIENCY: 3
+            UNBREAKING: 2
+            FORTUNE: 1
+        # VIP Resources
+        - material: "DIAMOND"
+          amount: 5
+        - material: "GOLDEN_APPLE"
+          amount: 5
+        - material: "ENDER_PEARL"
+          amount: 16
+
+    mvp:
+      display-name: "&6&lMVP Kit"
+      permission: "portal2exit.kit.mvp"
+      one-time-only: false
+      items:
+        # MVP Armor
+        - material: "DIAMOND_HELMET"
+          amount: 1
+          name: "&6&lMVP Helmet"
+          enchantments:
+            PROTECTION: 3
+            UNBREAKING: 3
+            AQUA_AFFINITY: 1
+        - material: "DIAMOND_CHESTPLATE"
+          amount: 1
+          name: "&6&lMVP Chestplate"
+          enchantments:
+            PROTECTION: 3
+            UNBREAKING: 3
+        - material: "DIAMOND_LEGGINGS"
+          amount: 1
+          name: "&6&lMVP Leggings"
+          enchantments:
+            PROTECTION: 3
+            UNBREAKING: 3
+        - material: "DIAMOND_BOOTS"
+          amount: 1
+          name: "&6&lMVP Boots"
+          enchantments:
+            PROTECTION: 3
+            UNBREAKING: 3
+            FEATHER_FALLING: 3
+            DEPTH_STRIDER: 2
+        # MVP Weapons
+        - material: "DIAMOND_SWORD"
+          amount: 1
+          name: "&6&lMVP Destroyer"
+          lore:
+            - "&7The legendary MVP weapon"
+            - "&6+30% attack damage"
+            - "&cBurns enemies on hit"
+          enchantments:
+            SHARPNESS: 4
+            UNBREAKING: 3
+            FIRE_ASPECT: 2
+            LOOTING: 2
+        - material: "BOW"
+          amount: 1
+          name: "&6&lMVP Bow"
+          enchantments:
+            POWER: 4
+            UNBREAKING: 3
+            FLAME: 1
+            INFINITY: 1
+        # MVP Tools
+        - material: "DIAMOND_PICKAXE"
+          amount: 1
+          name: "&6&lMVP Miner"
+          enchantments:
+            EFFICIENCY: 4
+            UNBREAKING: 3
+            FORTUNE: 2
+        - material: "DIAMOND_AXE"
+          amount: 1
+          name: "&6&lMVP Chopper"
+          enchantments:
+            EFFICIENCY: 4
+            UNBREAKING: 3
+            SHARPNESS: 3
+        # MVP Resources
+        - material: "DIAMOND_BLOCK"
+          amount: 2
+        - material: "GOLDEN_APPLE"
+          amount: 10
+        - material: "ENDER_PEARL"
+          amount: 32
+        - material: "EXPERIENCE_BOTTLE"
+          amount: 32
+
+    legend:
+      display-name: "&c&lLEGEND Kit"
+      permission: "portal2exit.kit.legend"
+      one-time-only: false
+      items:
+        # Legend Armor
+        - material: "NETHERITE_HELMET"
+          amount: 1
+          name: "&c&lLegendary Crown"
+          lore:
+            - "&7Forged from ancient materials"
+            - "&c+50% damage reduction"
+            - "&6Unbreakable"
+          enchantments:
+            PROTECTION: 4
+            UNBREAKING: 3
+            RESPIRATION: 3
+        - material: "NETHERITE_CHESTPLATE"
+          amount: 1
+          name: "&c&lLegendary Chestplate"
+          enchantments:
+            PROTECTION: 4
+            UNBREAKING: 3
+            THORNS: 2
+        - material: "NETHERITE_LEGGINGS"
+          amount: 1
+          name: "&c&lLegendary Leggings"
+          enchantments:
+            PROTECTION: 4
+            UNBREAKING: 3
+        - material: "NETHERITE_BOOTS"
+          amount: 1
+          name: "&c&lLegendary Boots"
+          enchantments:
+            PROTECTION: 4
+            UNBREAKING: 3
+            FEATHER_FALLING: 4
+            SOUL_SPEED: 3
+        # Legend Weapons
+        - material: "NETHERITE_SWORD"
+          amount: 1
+          name: "&c&lExcalibur"
+          lore:
+            - "&7The legendary blade of heroes"
+            - "&c+100% attack damage"
+            - "&6Slays all evil"
+          enchantments:
+            SHARPNESS: 5
+            UNBREAKING: 3
+            FIRE_ASPECT: 2
+            LOOTING: 3
+            SWEEPING: 3
+        - material: "TRIDENT"
+          amount: 1
+          name: "&c&lPoseidon's Trident"
+          enchantments:
+            LOYALTY: 3
+            IMPALING: 5
+            UNBREAKING: 3
+            CHANNELING: 1
+        # Legend Items
+        - material: "TOTEM_OF_UNDYING"
+          amount: 2
+        - material: "ENCHANTED_GOLDEN_APPLE"
+          amount: 5
+        - material: "NETHERITE_BLOCK"
+          amount: 1
+        - material: "BEACON"
+          amount: 1
+
+    # === SPECIALIZED KITS ===
+    builder:
+      display-name: "&eBuilder's Kit"
+      permission: "portal2exit.kit.builder"
+      one-time-only: false
+      items:
+        - material: "STONE"
+          amount: 256
+        - material: "OAK_PLANKS"
+          amount: 256
+        - material: "GLASS"
+          amount: 128
+        - material: "QUARTZ_BLOCK"
+          amount: 64
+        - material: "GLOWSTONE"
+          amount: 64
+        - material: "SEA_LANTERN"
+          amount: 32
+        - material: "SCAFFOLDING"
+          amount: 64
+        - material: "LADDER"
+          amount: 64
+
+    miner:
+      display-name: "&7Miner's Kit"
+      permission: "portal2exit.kit.miner"
+      one-time-only: false
+      items:
+        - material: "IRON_PICKAXE"
+          amount: 1
+          name: "&7Miner's Pick"
+          enchantments:
+            EFFICIENCY: 3
+            UNBREAKING: 2
+            FORTUNE: 2
+        - material: "TORCH"
+          amount: 128
+        - material: "COAL"
+          amount: 64
+        - material: "IRON_INGOT"
+          amount: 32
+        - material: "MINECART"
+          amount: 5
+        - material: "RAIL"
+          amount: 64
+        - material: "TNT"
+          amount: 16
+
+    farmer:
+      display-name: "&2Farmer's Kit"
+      permission: "portal2exit.kit.farmer"
+      one-time-only: false
+      items:
+        - material: "DIAMOND_HOE"
+          amount: 1
+          name: "&2Harvest Tool"
+          enchantments:
+            UNBREAKING: 3
+        - material: "WHEAT_SEEDS"
+          amount: 64
+        - material: "CARROT"
+          amount: 64
+        - material: "POTATO"
+          amount: 64
+        - material: "BEETROOT_SEEDS"
+          amount: 64
+        - material: "BONE_MEAL"
+          amount: 128
+        - material: "WATER_BUCKET"
+          amount: 2
+        - material: "COMPOSTER"
+          amount: 4
+
+    warrior:
+      display-name: "&4Warrior's Kit"
+      permission: "portal2exit.kit.warrior"
+      one-time-only: false
+      items:
+        - material: "IRON_SWORD"
+          amount: 1
+          name: "&4Battle Blade"
+          enchantments:
+            SHARPNESS: 3
+            SWEEPING: 2
+        - material: "SHIELD"
+          amount: 1
+        - material: "BOW"
+          amount: 1
+          enchantments:
+            POWER: 2
+            PUNCH: 1
+        - material: "ARROW"
+          amount: 128
+        - material: "GOLDEN_APPLE"
+          amount: 8
+        - material: "STRENGTH"
+          amount: 3
+          name: "&4Strength Potion"
+
+    explorer:
+      display-name: "&3Explorer's Kit"
+      permission: "portal2exit.kit.explorer"
+      one-time-only: false
+      items:
+        - material: "COMPASS"
+          amount: 1
+        - material: "MAP"
+          amount: 5
+        - material: "SPYGLASS"
+          amount: 1
+        - material: "BOAT"
+          amount: 2
+        - material: "ENDER_PEARL"
+          amount: 16
+        - material: "COOKED_BEEF"
+          amount: 64
+        - material: "TORCH"
+          amount: 64
+        - material: "BED"
+          amount: 1
+        - material: "LEAD"
+          amount: 4
+
+    redstone:
+      display-name: "&cRedstone Engineer Kit"
+      permission: "portal2exit.kit.redstone"
+      one-time-only: false
+      items:
+        - material: "REDSTONE"
+          amount: 256
+        - material: "REDSTONE_TORCH"
+          amount: 64
+        - material: "REDSTONE_BLOCK"
+          amount: 16
+        - material: "PISTON"
+          amount: 32
+        - material: "STICKY_PISTON"
+          amount: 16
+        - material: "OBSERVER"
+          amount: 16
+        - material: "COMPARATOR"
+          amount: 16
+        - material: "REPEATER"
+          amount: 16
+        - material: "HOPPER"
+          amount: 16
+        - material: "DROPPER"
+          amount: 16
+        - material: "DISPENSER"
+          amount: 16
+
+# Exit Portal Settings
+exit-portals:
+  # Default exit location type: "spawn", "bed", "custom"
+  default-exit-type: "spawn"
+
+  # Custom exit location (only used if default-exit-type is "custom")
+  custom-exit:
+    world: "world"
+    x: 0
+    y: 64
+    z: 0
+    yaw: 0
+    pitch: 0
+
+# Teleportation Settings
+teleportation:
+  # Safety checks when teleporting
+  safety-checks: true
+
+  # Whether to teleport to safe location if destination is unsafe
+  find-safe-location: true
+
+  # Maximum distance to search for safe location
+  safe-location-search-radius: 5
+
+# Messages (use & for color codes)
+messages:
+  portal-created: "&aPortal '&6{name}&a' created successfully!"
+  portal-removed: "&cPortal '&6{name}&c' has been removed."
+  portal-not-found: "&cPortal '&6{name}&c' not found."
+  portal-already-exists: "&cA portal with the name '&6{name}&c' already exists."
+  no-permission: "&cYou don't have permission to do that."
+  portal-used: "&bYou used the &6{name}&b portal!"
+  exit-used: "&aYou exited through the &6{name}&a portal!"
+  cooldown-active: "&cYou must wait &6{seconds}&c seconds before using another portal."
+  max-portals-reached: "&cYou have reached the maximum number of portals (&6{max}&c)."
+  missing-required-items: "&cYou need the following items to use this portal: &6{items}"
+  missing-permission: "&cYou need permission &6{permission}&c to use this portal."
+  missing-required-kit: "&cYou need the &6{kit}&c kit to use this portal."
+  insufficient-funds: "&cYou need &6{amount}&c to use this portal."
+  economy-error: "&cAn economy error occurred. Please contact an administrator."
+  kit-received: "&aYou received the &6{kit}&a kit!"
+  kit-cooldown: "&cThe &6{kit}&c kit is on cooldown for &6{time}&c seconds."
+
+  # Economy messages
+  portal-cost-paid: "&aYou paid &6${amount}&a to use this portal."
+  portal-creation-cost: "&aPortal created! Cost: &6${amount}"
+  portal-refund: "&aYou received a refund of &6${amount}&a for removing the portal."
+  kit-one-time: "&cYou have already claimed this one-time kit!"
+  kit-no-space: "&cYou need more inventory space to claim this kit!"
+
+# Command Messages
+commands:
+  invalid-args: "&cInvalid arguments. Use &6{usage}"
+  player-only: "&cThis command can only be used by players."
+  reload-success: "&aConfiguration reloaded successfully!"
+  portal-list-header: "&6--- Portal List ---"
+  portal-list-item: "&7- &b{name} &7at &e{location}"
+  portal-list-empty: "&7No portals found."

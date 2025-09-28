@@ -1,0 +1,210 @@
+# Portal2Exit Configuration File - Enhanced Edition
+# Supports Minecraft 1.12.2 through 1.21+
+# Works with Bukkit, Spigot, Paper, and Mohist
+
+# Plugin Settings
+plugin:
+  # Enable debug logging
+  debug: false
+
+  # Auto-save interval in minutes (0 to disable)
+  auto-save-interval: 5
+
+# Version Compatibility Settings
+compatibility:
+  # Auto-detect server version and adapt features
+  use-legacy-materials: auto  # auto, true, false
+  particle-fallback: true
+  sound-fallback: true
+
+# Portal Settings
+portals:
+  # Maximum number of portals per player (0 for unlimited)
+  max-portals-per-player: 10
+
+  # Portal cooldown in seconds
+  cooldown: 3
+
+  # Whether to play sounds when using portals
+  sounds-enabled: true
+
+  # Whether to show particles when using portals
+  particles-enabled: true
+
+  # Portal creation settings
+  creation:
+    # Item required to create portals (use minecraft:item_name format)
+    required-item: "minecraft:ender_eye"
+
+    # Block required as base for portal creation
+    required-base-block: "minecraft:obsidian"
+
+    # Whether to consume the required item when creating a portal
+    consume-item: true
+
+# Portal Visual Effects
+portal-effects:
+  # Ambient particles at portal locations
+  ambient-particles:
+    enabled: true
+    type: "PORTAL"  # Will adapt based on version
+    radius: 2.0
+    density: 10
+    height: 3.0
+
+  # Portal activation effects
+  activation:
+    particles: true
+    sounds: true
+    lightning: false
+
+# Exit Portal Settings
+exit-portals:
+  # Default exit location type: "spawn", "bed", "custom"
+  default-exit-type: "spawn"
+
+  # Custom exit location (only used if default-exit-type is "custom")
+  custom-exit:
+    world: "world"
+    x: 0
+    y: 64
+    z: 0
+    yaw: 0
+    pitch: 0
+
+# Teleportation Settings
+teleportation:
+  # Safety checks when teleporting
+  safety-checks: true
+
+  # Whether to teleport to safe location if destination is unsafe
+  find-safe-location: true
+
+  # Maximum distance to search for safe location
+  safe-location-search-radius: 5
+
+# Economy Settings (requires Vault)
+economy:
+  # Enable economy features
+  enabled: true
+
+  # Default cost to use a portal (can be overridden per portal)
+  default-cost: 100.0
+
+  # Percentage of usage cost that goes to portal owner (0.1 = 10%)
+  owner-gets-percentage: 0.1
+
+  # Free portals for these permission groups
+  free-for-permissions:
+    - "portal2exit.vip"
+    - "portal2exit.bypass.cost"
+
+  # Messages
+  insufficient-funds: "&cYou need %amount% to use this portal!"
+  payment-success: "&aYou paid %amount% to use the portal"
+  owner-revenue: "&aYou received %amount% from %player% using your portal"
+
+# Kit System
+kits:
+  # Enable kit system
+  enabled: true
+
+  # Clear inventory before giving kit
+  clear-inventory: false
+
+  # Default kit for all portals (can be overridden per portal)
+  default-kit: "starter"
+
+  # Kit definitions
+  starter:
+    # Items to give (format: "MATERIAL AMOUNT")
+    items:
+      - "DIAMOND_SWORD 1"
+      - "GOLDEN_APPLE 16"
+      - "BREAD 32"
+      - "TORCH 64"
+
+    # Armor to equip
+    armor:
+      helmet: "IRON_HELMET"
+      chestplate: "IRON_CHESTPLATE"
+      leggings: "IRON_LEGGINGS"
+      boots: "IRON_BOOTS"
+
+    # Kit-specific settings
+    clear-inventory: false
+    cooldown: 3600  # 1 hour in seconds
+    cost: 50.0  # Additional cost for the kit
+    permission: null  # No special permission required
+
+  vip:
+    items:
+      - "DIAMOND_SWORD 1"
+      - "DIAMOND_PICKAXE 1"
+      - "DIAMOND_AXE 1"
+      - "GOLDEN_APPLE 32"
+      - "ENDER_PEARL 16"
+
+    armor:
+      helmet: "DIAMOND_HELMET"
+      chestplate: "DIAMOND_CHESTPLATE"
+      leggings: "DIAMOND_LEGGINGS"
+      boots: "DIAMOND_BOOTS"
+
+    clear-inventory: false
+    cooldown: 7200  # 2 hours
+    cost: 500.0
+    permission: "portal2exit.kit.vip"
+
+# Messages (use & for color codes)
+messages:
+  # Portal messages
+  portal-created: "&aPortal '&6{name}&a' created successfully!"
+  portal-removed: "&cPortal '&6{name}&c' has been removed."
+  portal-not-found: "&cPortal '&6{name}&c' not found."
+  portal-already-exists: "&cA portal with the name '&6{name}&c' already exists."
+  no-permission: "&cYou don't have permission to do that."
+  portal-used: "&bYou used the &6{name}&b portal!"
+  exit-used: "&aYou exited through the &6{name}&a portal!"
+
+  # Cooldown messages
+  cooldown-active: "&cYou must wait &6{seconds}&c seconds before using another portal."
+
+  # Limit messages
+  max-portals-reached: "&cYou have reached the maximum number of portals (&6{max}&c)."
+
+  # Kit messages
+  kit-received: "&aYou received the &6{kit}&a kit!"
+  kit-cooldown: "&cYou must wait &6{time}&c seconds before using this kit again."
+  kit-no-permission: "&cYou don't have permission to use the &6{kit}&c kit."
+
+  # Economy messages
+  economy-error: "&cAn error occurred processing your payment."
+  insufficient-funds: "&cYou need &6{amount}&c to use this portal."
+
+# Command Messages
+commands:
+  invalid-args: "&cInvalid arguments. Use &6{usage}"
+  player-only: "&cThis command can only be used by players."
+  reload-success: "&aConfiguration reloaded successfully!"
+  portal-list-header: "&6--- Portal List ---"
+  portal-list-item: "&7- &b{name} &7at &e{location}"
+  portal-list-empty: "&7No portals found."
+
+  # New commands for enhanced features
+  portal-cost-set: "&aPortal cost set to &6{amount}"
+  portal-kit-set: "&aPortal kit set to &6{kit}"
+  portal-particles-toggle: "&aPortal particles &6{status}"
+
+# Permissions (for reference)
+# portal2exit.use - Basic portal usage
+# portal2exit.create - Create portals
+# portal2exit.remove - Remove portals
+# portal2exit.remove.others - Remove other players' portals
+# portal2exit.admin - Admin commands
+# portal2exit.bypass.limit - Bypass portal limit
+# portal2exit.bypass.cooldown - Bypass cooldown
+# portal2exit.bypass.cost - Bypass economy cost
+# portal2exit.kit.* - Access to all kits
+# portal2exit.setcost - Set portal costs
+# portal2exit.setkit - Set portal kits

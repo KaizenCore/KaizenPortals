@@ -100,10 +100,44 @@ public class TeleportationManager {
         player.sendMessage(plugin.getConfigManager().getMessage("portal-used", "{name}", portal.getName()));
     }
 
+    /**
+     * Gets exit location based on the portal's selection mode (FIRST, RANDOM, SEQUENTIAL, NEAREST)
+     */
+    private Location getExitBySelectionMode(Player player, Portal portal) {
+        if (portal.getExitPoints().isEmpty()) {
+            return portal.getCustomExit();
+        }
+
+        switch (portal.getSelectionMode()) {
+            case FIRST:
+                return portal.getExitPoints().get(0);
+
+            case RANDOM:
+                return portal.getRandomExitPoint();
+
+            case SEQUENTIAL:
+                return portal.getSequentialExitPoint();
+
+            case NEAREST:
+                Location nearest = portal.getNearestExitPoint(player.getLocation());
+                return nearest != null ? nearest : portal.getExitPoints().get(0);
+
+            default:
+                return portal.getExitPoints().get(0);
+        }
+    }
+
     private Location getExitLocation(Player player, Portal portal) {
+        // Add null safety for world
+        if (player.getWorld() == null) {
+            plugin.getLogger().warning("Player world is null for " + player.getName());
+            return null;
+        }
+
         switch (portal.getExitType()) {
             case SPAWN:
-                return player.getWorld().getSpawnLocation();
+                Location spawnLoc = player.getWorld().getSpawnLocation();
+                return spawnLoc != null ? spawnLoc : player.getLocation();
 
             case BED:
                 Location bedLocation = player.getBedSpawnLocation();
@@ -111,11 +145,28 @@ public class TeleportationManager {
                     return bedLocation;
                 } else {
                     // Fall back to spawn if no bed
-                    return player.getWorld().getSpawnLocation();
+                    Location spawn = player.getWorld().getSpawnLocation();
+                    return spawn != null ? spawn : player.getLocation();
                 }
 
             case CUSTOM:
-            case RANDOM:  // Both CUSTOM and RANDOM use the random exit point selection
+                // Use the specific selection mode for CUSTOM type
+                Location customExit = getExitBySelectionMode(player, portal);
+                if (customExit != null) {
+                    return customExit.clone();
+                } else {
+                    // Fall back to default custom exit from config
+                    Location configExit = plugin.getConfigManager().getCustomExitLocation();
+                    if (configExit != null) {
+                        return configExit.clone();
+                    } else {
+                        Location spawn = player.getWorld() != null ? player.getWorld().getSpawnLocation() : null;
+                        return spawn != null ? spawn : player.getLocation();
+                    }
+                }
+
+            case RANDOM:
+                // RANDOM type always uses random selection regardless of selection mode
                 Location randomExit = portal.getRandomExitPoint();
                 if (randomExit != null) {
                     return randomExit.clone();
@@ -125,7 +176,8 @@ public class TeleportationManager {
                     if (configExit != null) {
                         return configExit.clone();
                     } else {
-                        return player.getWorld().getSpawnLocation();
+                        Location spawn = player.getWorld() != null ? player.getWorld().getSpawnLocation() : null;
+                        return spawn != null ? spawn : player.getLocation();
                     }
                 }
 

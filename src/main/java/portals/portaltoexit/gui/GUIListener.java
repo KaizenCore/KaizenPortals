@@ -6,12 +6,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import portals.portaltoexit.Portaltoexit;
@@ -28,22 +30,27 @@ public class GUIListener implements Listener {
     private final Map<UUID, String> playerFilterContext = new HashMap<>();
     private final Map<UUID, String> playerPendingAction = new HashMap<>();
     private final Map<UUID, Location> playerSelectedLocation = new HashMap<>();
+    private final Map<UUID, String> playerWandSelectionMode = new HashMap<>();
+    private final Map<UUID, Portal> playerSelectedPortal = new HashMap<>();
 
     public GUIListener(Portaltoexit plugin) {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = false)
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         ItemStack item = player.getInventory().getItemInMainHand();
 
+        // Check for portal wand first before cancelling the event
         if (!PortalWand.isPortalWand(item)) {
             return;
         }
 
+        // Now that we know it's a portal wand, cancel the event
+        event.setCancelled(true);
+
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
-            event.setCancelled(true);
 
             // Check if player is near a portal
             Portal nearbyPortal = plugin.getPortalManager().getPortalAtLocation(player.getLocation());
@@ -57,9 +64,29 @@ public class GUIListener implements Listener {
                 // Check if player has a selected location to add as exit point
                 Location selectedLoc = playerSelectedLocation.get(player.getUniqueId());
                 if (selectedLoc != null) {
+                    // Validate location before adding
+                    if (selectedLoc.getWorld() == null) {
+                        player.sendMessage(ChatColor.RED + "Invalid location: world not loaded!");
+                        playerSelectedLocation.remove(player.getUniqueId());
+                        return;
+                    }
+
+                    // Check if location is too far from portal
+                    if (!selectedLoc.getWorld().equals(nearbyPortal.getLocation().getWorld())) {
+                        player.sendMessage(ChatColor.YELLOW + "Warning: Exit point is in a different world than the portal!");
+                    }
+
+                    // Check if this exit point already exists
+                    if (nearbyPortal.getExitPoints().contains(selectedLoc)) {
+                        player.sendMessage(ChatColor.RED + "This exit point already exists for this portal!");
+                        player.sendMessage(ChatColor.YELLOW + "Select a different location with left-click.");
+                        return;
+                    }
+
                     nearbyPortal.addExitPoint(selectedLoc);
                     plugin.getPortalManager().savePortals();
                     player.sendMessage(ChatColor.GREEN + "Exit point added to portal " + nearbyPortal.getName() + "!");
+                    player.sendMessage(ChatColor.GRAY + "Total exit points: " + nearbyPortal.getExitPoints().size());
                     playerSelectedLocation.remove(player.getUniqueId());
 
                     // Open the exit points GUI to show the new exit point
@@ -89,13 +116,22 @@ public class GUIListener implements Listener {
                 PortalListGUI.openPortalListGUI(player, 0, null);
             }
 
-        } else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-            event.setCancelled(true);
-
+        } else if (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) {
             if (event.getClickedBlock() != null) {
                 Location clickedLocation = event.getClickedBlock().getLocation().add(0.5, 1, 0.5);
                 playerSelectedLocation.put(player.getUniqueId(), clickedLocation);
                 player.sendMessage(ChatColor.GREEN + "Location selected! Use the Portal Wand on a portal to add this as an exit point.");
+            } else {
+                // Left-clicking air - provide feedback
+                Location selectedLoc = playerSelectedLocation.get(player.getUniqueId());
+                if (selectedLoc != null) {
+                    player.sendMessage(ChatColor.YELLOW + "Current selected location: " +
+                        ChatColor.WHITE + String.format("X: %.1f, Y: %.1f, Z: %.1f in %s",
+                        selectedLoc.getX(), selectedLoc.getY(), selectedLoc.getZ(),
+                        selectedLoc.getWorld() != null ? selectedLoc.getWorld().getName() : "unknown"));
+                } else {
+                    player.sendMessage(ChatColor.YELLOW + "Left-click a block to select an exit location.");
+                }
             }
         }
     }
@@ -248,12 +284,34 @@ public class GUIListener implements Listener {
                 case 45: // Add Exit Point
                     Location selectedLoc = playerSelectedLocation.get(player.getUniqueId());
                     if (selectedLoc != null) {
+                        // Validate location before adding
+                        if (selectedLoc.getWorld() == null) {
+                            player.sendMessage(ChatColor.RED + "Invalid location: world not loaded!");
+                            playerSelectedLocation.remove(player.getUniqueId());
+                            return;
+                        }
+
+                        if (!selectedLoc.getWorld().equals(portal.getLocation().getWorld())) {
+                            player.sendMessage(ChatColor.YELLOW + "Warning: Exit point is in a different world than the portal!");
+                        }
+
                         portal.addExitPoint(selectedLoc);
                         plugin.getPortalManager().savePortals();
                         player.sendMessage(ChatColor.GREEN + "Exit point added!");
                         playerSelectedLocation.remove(player.getUniqueId());
                     } else {
-                        portal.addExitPoint(player.getLocation());
+                        // Validate current location
+                        Location currentLoc = player.getLocation();
+                        if (currentLoc.getWorld() == null) {
+                            player.sendMessage(ChatColor.RED + "Invalid location: world not loaded!");
+                            return;
+                        }
+
+                        if (!currentLoc.getWorld().equals(portal.getLocation().getWorld())) {
+                            player.sendMessage(ChatColor.YELLOW + "Warning: Exit point is in a different world than the portal!");
+                        }
+
+                        portal.addExitPoint(currentLoc);
                         plugin.getPortalManager().savePortals();
                         player.sendMessage(ChatColor.GREEN + "Current location added as exit point!");
                     }
@@ -553,6 +611,8 @@ public class GUIListener implements Listener {
         playerFilterContext.remove(playerId);
         playerPendingAction.remove(playerId);
         playerSelectedLocation.remove(playerId);
+        playerWandSelectionMode.remove(playerId);
+        playerSelectedPortal.remove(playerId);
     }
 
     private String generatePortalName(Player player) {
@@ -567,5 +627,23 @@ public class GUIListener implements Listener {
         } while (plugin.getPortalManager().getPortal(portalName) != null);
 
         return portalName;
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        // Clean up all player data on disconnect to prevent memory leaks
+        UUID playerId = event.getPlayer().getUniqueId();
+
+        playerPortalContext.remove(playerId);
+        playerPageContext.remove(playerId);
+        playerFilterContext.remove(playerId);
+        playerPendingAction.remove(playerId);
+        playerWandSelectionMode.remove(playerId);
+        playerSelectedPortal.remove(playerId);
+        playerSelectedLocation.remove(playerId);
+
+        if (plugin.getConfigManager().isDebug()) {
+            plugin.getLogger().info("Cleaned up data for player: " + event.getPlayer().getName());
+        }
     }
 }

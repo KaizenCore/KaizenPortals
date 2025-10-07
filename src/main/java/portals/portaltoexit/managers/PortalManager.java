@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import portals.portaltoexit.Portaltoexit;
 import portals.portaltoexit.data.Portal;
+import portals.portaltoexit.utils.PortalConstants;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +16,7 @@ public class PortalManager {
     private final Portaltoexit plugin;
     private final Map<String, Portal> portals;
     private final File dataFile;
+    private final Object saveLock = new Object();  // Synchronization for file operations
 
     public PortalManager(Portaltoexit plugin) {
         this.plugin = plugin;
@@ -41,19 +43,32 @@ public class PortalManager {
     }
 
     public void savePortals() {
-        YamlConfiguration config = new YamlConfiguration();
+        synchronized (saveLock) {
+            YamlConfiguration config = new YamlConfiguration();
 
-        for (Portal portal : portals.values()) {
-            config.set("portals." + portal.getName(), portal);
-        }
-
-        try {
-            config.save(dataFile);
-            if (plugin.getConfigManager().isDebug()) {
-                plugin.getLogger().info("Saved " + portals.size() + " portals.");
+            // Create thread-safe copy of portals to save
+            Map<String, Portal> portalsCopy;
+            synchronized (portals) {
+                portalsCopy = new HashMap<>(portals);
             }
-        } catch (IOException e) {
-            plugin.getLogger().severe("Failed to save portals: " + e.getMessage());
+
+            for (Portal portal : portalsCopy.values()) {
+                config.set("portals." + portal.getName(), portal);
+            }
+
+            try {
+                // Ensure parent directory exists
+                if (!dataFile.getParentFile().exists()) {
+                    dataFile.getParentFile().mkdirs();
+                }
+
+                config.save(dataFile);
+                if (plugin.getConfigManager().isDebug()) {
+                    plugin.getLogger().info("Saved " + portalsCopy.size() + " portals.");
+                }
+            } catch (IOException e) {
+                plugin.getLogger().severe("Failed to save portals: " + e.getMessage());
+            }
         }
     }
 
@@ -119,7 +134,7 @@ public class PortalManager {
 
     public Portal getPortalAtLocation(Location location) {
         for (Portal portal : portals.values()) {
-            if (isNearPortal(location, portal.getLocation(), 5.0)) { // Increased range from 2 to 5
+            if (isNearPortal(location, portal.getLocation(), PortalConstants.PORTAL_DETECTION_RADIUS)) {
                 return portal;
             }
         }
@@ -163,8 +178,10 @@ public class PortalManager {
     public void startAutoSave() {
         int interval = plugin.getConfigManager().getAutoSaveInterval();
         if (interval > 0) {
-            plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::savePortals,
-                    interval * 60 * 20L, interval * 60 * 20L); // Convert minutes to ticks
+            // Run save task asynchronously with proper synchronization
+            plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+                savePortals();  // Already synchronized internally
+            }, interval * 60 * 20L, interval * 60 * 20L); // Convert minutes to ticks
         }
     }
 

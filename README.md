@@ -1,4 +1,4 @@
-# Portal2Exit
+# KaizenPortals
 
 A comprehensive Minecraft portal plugin that revolutionizes transportation with multiple exit points, advanced management systems, and rich customization options.
 
@@ -16,9 +16,13 @@ A comprehensive Minecraft portal plugin that revolutionizes transportation with 
 
 ### GUI Management System
 - **Intuitive Interface**: Manage all portals through a user-friendly GUI (`/portal`)
-- **Portal Wand Tool**: Right-click to create portals and set exit points easily
+- **Portal Wand Tool**: Interactive wand for easy portal management
+  - Left-click blocks to select exit locations
+  - Right-click portals to add selected exits
+  - Right-click air to create new portals
+  - Visual feedback and duplicate detection
 - **Visual Portal List**: Browse all portals with detailed information
-- **Exit Point Manager**: Add, remove, and configure exit points per portal
+- **Exit Point Manager**: Add, remove, and configure exit points per portal with pagination support
 
 ### Advanced Features
 
@@ -179,7 +183,15 @@ exit-portals:
 
 ## 🎯 Usage Examples
 
-### Creating a Hub Portal
+### Using the Portal Wand (Recommended)
+1. Get the wand: `/portal wand`
+2. **Select an exit location**: Left-click a block where you want players to teleport
+3. **Create/manage portal**: Stand within 5 blocks of where you want the portal
+4. Right-click with the wand to add the exit point to the portal
+5. Repeat steps 2-4 to add multiple exit points
+6. Left-click air to see your currently selected location
+
+### Creating a Hub Portal (Command Method)
 1. Stand at your hub location
 2. Run `/portal create hub`
 3. Travel to destination
@@ -226,14 +238,20 @@ exit-portals:
 
 ## 🔄 Version History
 
-### v1.0-SNAPSHOT
-- Initial release
-- Core portal system with multiple exits
-- GUI management interface
-- Kit distribution system
+### v1.0-SNAPSHOT (Latest)
+- **Portal Wand Fixes**: Resolved critical event priority issues preventing exit point creation
+- **Enhanced Wand Functionality**:
+  - Left-click air support for location feedback
+  - Duplicate exit detection with user feedback
+  - Better validation for world loading and cross-world exits
+- **Selection Mode Support**: Fixed teleportation to properly use FIRST, RANDOM, SEQUENTIAL, and NEAREST modes
+- **Code Quality**: Uses constants for portal detection radius, improved maintainability
+- Core portal system with unlimited exits
+- Interactive GUI management interface
+- Kit distribution system with 13 pre-configured kits
 - Permission-based limits
-- Economy integration
-- Cross-version support
+- Economy integration via Vault
+- Cross-version support (1.12.2 - 1.21+)
 - Bug fixes for XSeries dependencies
 - ConfigurationSection handling improvements
 
@@ -276,4 +294,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-**Portal2Exit** - Transform your Minecraft server's transportation system!
+**KaizenPortals** - Transform your Minecraft server's transportation system with continuous improvement!

@@ -90,8 +90,14 @@ test {
     }
 }
 
+// Configure JAR naming
+tasks.withType(Jar) {
+    archiveBaseName.set('KaizenPortals')
+}
+
 // Shadow JAR configuration
 shadowJar {
+    archiveBaseName.set('KaizenPortals')
     archiveClassifier.set('all')
     relocate 'com.cryptomorin.xseries', 'portals.portaltoexit.libs.xseries'
 

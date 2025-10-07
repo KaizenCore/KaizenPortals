@@ -1,10 +1,10 @@
-name: Portal2Exit
+name: KaizenPortals
 version: '${version}'
 main: portals.portaltoexit.Portaltoexit
 api-version: '1.21'
-author: Portal2Exit Developer
-description: A Portal-themed exit and teleportation plugin for Minecraft
-website: https://github.com/portal2exit
+author: KaizenCore
+description: Advanced portal plugin with multiple exit points and continuous improvements
+website: https://github.com/KaizenCore/portal2exit
 softdepend: [Vault]
 
 commands:

@@ -4,7 +4,7 @@ plugins {
     id("io.github.goooler.shadow") version "8.1.8"
 }
 
-group = 'portals'
+group = 'com.kaizencore'
 version = '1.0-SNAPSHOT'
 
 repositories {

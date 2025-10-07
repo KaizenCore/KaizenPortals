@@ -27,9 +27,9 @@ public class Portaltoexit extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        getLogger().info("[Portal2Exit] Loading...");
-        getLogger().info("[Portal2Exit] Server version: " + VersionCompatibility.getServerVersion());
-        getLogger().info("[Portal2Exit] Running on: " +
+        getLogger().info("[KaizenPortals] Loading...");
+        getLogger().info("[KaizenPortals] Server version: " + VersionCompatibility.getServerVersion());
+        getLogger().info("[KaizenPortals] Running on: " +
             (VersionCompatibility.isPaper() ? "Paper" :
              VersionCompatibility.isSpigot() ? "Spigot" : "Bukkit"));
 
@@ -73,26 +73,26 @@ public class Portaltoexit extends JavaPlugin {
             if (configManager.arePortalParticlesEnabled()) {
                 particleTask = new PortalParticleTask(this);
                 particleTask.start();
-                getLogger().info("[Portal2Exit] Particle effects enabled");
+                getLogger().info("[KaizenPortals] Particle effects enabled");
             }
 
             // Start exit point particle task
             if (configManager.areParticlesEnabled()) {
                 exitParticleTask = new ExitPointParticleTask(this);
                 exitParticleTask.runTaskTimer(this, 40L, 20L); // Every second
-                getLogger().info("[Portal2Exit] Exit point particles enabled");
+                getLogger().info("[KaizenPortals] Exit point particles enabled");
             }
 
             // Start auto-save task
             portalManager.startAutoSave();
 
-            getLogger().info("[Portal2Exit] Enabled successfully!");
-            getLogger().info("[Portal2Exit] Loaded " + portalManager.getPortalCount() + " portals");
+            getLogger().info("[KaizenPortals] Enabled successfully!");
+            getLogger().info("[KaizenPortals] Loaded " + portalManager.getPortalCount() + " portals");
             if (economyManager.isEnabled()) {
-                getLogger().info("[Portal2Exit] Economy integration active");
+                getLogger().info("[KaizenPortals] Economy integration active");
             }
         } catch (Exception e) {
-            getLogger().severe("Failed to enable Portal2Exit: " + e.getMessage());
+            getLogger().severe("Failed to enable KaizenPortals: " + e.getMessage());
             e.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
         }
@@ -100,7 +100,7 @@ public class Portaltoexit extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        getLogger().info("[Portal2Exit] Saving data...");
+        getLogger().info("[KaizenPortals] Saving data...");
 
         // Cancel particle tasks
         if (particleTask != null) {
@@ -120,7 +120,7 @@ public class Portaltoexit extends JavaPlugin {
             kitManager.saveKits();
         }
 
-        getLogger().info("[Portal2Exit] Disabled!");
+        getLogger().info("[KaizenPortals] Disabled!");
     }
 
     private void registerEvents() {
